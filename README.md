@@ -34,14 +34,14 @@ L2G 是一款浏览器扩展程序，可以自动将您在 LeetCode 上通过的
 
 ### 初始配置 (绑定 GitHub)
 
-![0428641e777bc7f684ad285a6e1e57a1](README.assets/0428641e777bc7f684ad285a6e1e57a1.png)
+![s1](README.assets/s1.png)
 
 1. 点击浏览器右上角的 `L2G` 扩展图标。
 2. 点击 "Authenticate" (认证) 按钮授权 GitHub。
 3. 在弹出的页面中，选择是 **创建一个新仓库** 还是 **绑定已有仓库**。
 4. 完成绑定后，即可在 LeetCode 愉快刷题，代码将会自动同步！
 
-![截屏2026-02-21 20.13.23](README.assets/截屏2026-02-21 20.13.23.png)
+![s2](README.assets/s2.png)
 
 ## 🛠️ 技术栈
 
@@ -49,4 +49,6 @@ L2G 是一款浏览器扩展程序，可以自动将您在 LeetCode 上通过的
 - Chrome / Firefox Extension API
 - GitHub REST API v3
 
-本项目基于leethub二次开发,全程使用google antigravity对话开发google的恩情还不完( ( (
+---
+
+## 本项目基于leethub二次开发,全程使用google antigravity对话开发google的恩情还不完( ( (😭
