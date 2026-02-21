@@ -8,7 +8,7 @@ const getSubmissionPageBtns = () => {
 
 const createToolTip = () => {
   const toolTip = document.createElement('div');
-  toolTip.id = 'leethub-upload-tooltip';
+  toolTip.id = 'L2G-upload-tooltip';
   toolTip.textContent =
     'Manually upload this submission to GitHub (beta).\nThis will OVERWRITE your current submission.\nPlease be mindful of your GitHub rate-limits.';
   toolTip.className =
@@ -18,7 +18,7 @@ const createToolTip = () => {
 
 const createGitIcon = () => {
   const uploadIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  uploadIcon.setAttribute('id', 'leethub-upload-icon');
+  uploadIcon.setAttribute('id', 'L2G-upload-icon');
   uploadIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   uploadIcon.setAttribute('width', '16');
   uploadIcon.setAttribute('height', '17');
@@ -40,11 +40,11 @@ const createGitIcon = () => {
 
 function addManualSubmitBtn(eventHandler) {
   const btns = getSubmissionPageBtns();
-  if (btns.innerText.includes('Solution') && !btns.innerText.includes('LeetHub')) {
+  if ((btns.innerText.includes('Solution') || btns.innerText.includes('题解')) && !btns.innerText.includes('Sync to Github')) {
     btns.appendChild(
       (() => {
         const btn = document.createElement('button');
-        btn.innerText = 'Sync w/ LeetHub';
+        btn.innerText = 'Sync to Github';
         btn.setAttribute('style', 'background-color:darkorange');
         btn.setAttribute(
           'class',
@@ -75,19 +75,19 @@ function setupManualSubmitBtn(submitBtnHandler) {
   // For continued SPA use, detect when LeetCode dynamic layout loads, set up click listener, then listen for btns. 
   const pageObserver = new MutationObserver((_, observer) => {
     // Display submission button on refresh trigger
-    if (window.location.href.match(/leetcode\.com\/(.*)\/submissions\/(\d+)/)) {
+    if (window.location.href.match(/leetcode\.cn\/(.*)\/submissions\/(\d+)/)) {
       submissionPageBtnsObserver.observe(document.body, {
         childList: true,
         subtree: true,
       });
       return
-    } 
+    }
 
     const dynamicLayout = document.querySelector('.flexlayout__layout');
     if (!dynamicLayout) {
       return;
     }
-    
+
     observer.disconnect()
 
     dynamicLayout.addEventListener('click', async () => {

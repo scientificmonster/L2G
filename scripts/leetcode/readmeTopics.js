@@ -1,4 +1,4 @@
-import { LeetHubError } from "./util.js";
+import { L2GError } from "./util.js";
 
 const leetCodeSectionStart = `<!---LeetCode Topics Start-->`;
 const leetCodeSectionHeader = `# LeetCode Topics`;
@@ -82,7 +82,7 @@ function sortTopicsInReadme(markdownFile) {
   const leetCodeSection = markdownFile.match(
     new RegExp(`${leetCodeSectionStart}([\\s\\S]*)${leetCodeSectionEnd}`),
   )?.[1];
-  if (leetCodeSection == null) throw new LeetHubError('LeetCodeTopicSectionNotFound');
+  if (leetCodeSection == null) throw new L2GError('LeetCodeTopicSectionNotFound');
   
 
   // Remove the header
@@ -102,7 +102,7 @@ function sortTopicsInReadme(markdownFile) {
     if (topicHeaderIndex < leetCodeSectionStartIndex) {
       // matches the next '|\n' that doesn't precede a '|'. Typically this is '|\n#. Should always match if topic existed elsewhere.
       const endTopicString = markdownFile.slice(topicHeaderIndex).match(/\|\n[^|]/)?.[0];
-      if (endTopicString == null) throw new LeetHubError('EndOfTopicNotFound');
+      if (endTopicString == null) throw new L2GError('EndOfTopicNotFound');
 
       // Get the old problems for merge
       const endTopicIndex = markdownFile.indexOf(endTopicString, topicHeaderIndex + 1);

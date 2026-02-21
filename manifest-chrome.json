@@ -1,14 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "LeetHub v2",
-  "description": "Automatically integrate your Leetcode & GeeksforGeeks submissions to GitHub",
-  "homepage_url": "https://github.com/arunbhardwaj/LeetHub-2.0",
+  "name": "L2G",
+  "description": "自动同步LeetCode提交到GitHub",
+  "homepage_url": "https://github.com/arunbhardwaj/L2G",
   "version": "__LH_VERSION__",
   "author": "Arun Bhardwaj",
   "action": {
     "default_icon": "assets/thumbnail.png",
     "default_popup": "popup.html",
-    "default_title": "Upload your LeetCode solutions to GitHub"
+    "default_title": "自动同步LeetCode提交到GitHub"
   },
   "icons": {
     "16": "assets/thumbnail.png",
@@ -25,17 +25,21 @@
   ],
   "content_scripts": [
     {
-      "matches": ["https://leetcode.com/*"],
-      "js": ["scripts/leetcode.js"],
+      "matches": [
+        "https://leetcode.cn/*"
+      ],
+      "js": [
+        "scripts/leetcode.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://github.com/*"],
-      "js": ["scripts/authorize.js"]
-    },
-    {
-      "matches": ["https://practice.geeksforgeeks.org/*"],
-      "js": ["scripts/gfg.js"]
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "scripts/authorize.js"
+      ]
     }
   ],
   "content_security_policy": {

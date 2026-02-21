@@ -1,8 +1,8 @@
 {
-  "name": "LeetHub v2",
+  "name": "L2G",
   "version": "2.0.9",
   "private": true,
-  "description": "Automatically integrate your code with LeetCode and GitHub",
+  "description": "自动同步LeetCode提交到GitHub",
   "type": "module",
   "scripts": {
     "dev": "webpack --mode=production --watch",

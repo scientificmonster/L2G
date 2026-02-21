@@ -1,11 +1,9 @@
 let api = isChrome() ? chrome : isFirefox() ? browser : undefined;
 
-// const ONE_HOUR_MS = 60 * 60 * 1000;
-
 api.runtime.onInstalled.addListener(details => {
   if (details.reason === 'install') {
     // Allow persistent stats to sync on repo link
-    api.storage.local.set({ sync_stats: true});
+    api.storage.local.set({ sync_stats: true });
   }
 });
 
@@ -14,13 +12,13 @@ api.runtime.onMessage.addListener(handleMessage);
 function handleMessage(request, sender, sendResponse) {
   if (request && request.closeWebPage === true && request.isSuccess === true) {
     /* Set username */
-    api.storage.local.set({ leethub_username: request.username });
+    api.storage.local.set({ L2G_username: request.username });
 
     /* Set token */
-    api.storage.local.set({ leethub_token: request.token });
+    api.storage.local.set({ L2G_token: request.token });
 
     /* Close pipe */
-    api.storage.local.set({ pipe_leethub: false }, () => {
+    api.storage.local.set({ pipe_L2G: false }, () => {
       console.log('Closed pipe.');
     });
 
@@ -45,7 +43,7 @@ function handleMessage(request, sender, sendResponse) {
         sendResponse({ submissionId });
         api.webNavigation.onHistoryStateUpdated.removeListener(e);
       }),
-      { url: [{ hostSuffix: 'leetcode.com' }, { pathContains: 'submissions' }] }
+      { url: [{ hostSuffix: 'leetcode.cn' }, { pathContains: 'submissions' }] }
     );
   }
   return true;

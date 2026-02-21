@@ -7,19 +7,19 @@ import {
   getBrowser,
   getDifficulty,
   isEmptyObject,
-  LeetHubError,
+  L2GError,
   mergeStats,
 } from './util.js';
 import { appendProblemToReadme, sortTopicsInReadme } from './readmeTopics.js';
 
 /* Commit messages */
-const readmeMsg = 'Create README - LeetHub';
+const readmeMsg = 'Create README - L2G';
 const updateReadmeMsg = 'Update README - Topic Tags';
 const updateStatsMsg = 'Updated stats';
-const discussionMsg = 'Prepend discussion post - LeetHub';
-const createNotesMsg = 'Attach NOTES - LeetHub';
+const discussionMsg = 'Prepend discussion post - L2G';
+const createNotesMsg = 'Attach NOTES - L2G';
 const defaultRepoReadme =
-  'A collection of LeetCode questions to ace the coding interview! - Created using [LeetHub v2](https://github.com/arunbhardwaj/LeetHub-2.0)';
+  'A collection of LeetCode questions to ace the coding interview! - Created using [L2G](https://github.com/arunbhardwaj/L2G)';
 const readmeFilename = 'README.md';
 const statsFilename = 'stats.json';
 
@@ -68,7 +68,7 @@ const encode = data => btoa(unescape(encodeURIComponent(data)));
  *
  * @returns {Promise<string>} - A promise that resolves with the new SHA of the content after successful upload.
  *
- * @throws {LeetHubError} - Throws an error if the response is not OK (e.g., HTTP status code is not `200-299`).
+ * @throws {L2GError} - Throws an error if the response is not OK (e.g., HTTP status code is not `200-299`).
  */
 const upload = async (token, hook, content, problem, filename, sha, message) => {
   const path = getPath(problem, filename);
@@ -91,7 +91,7 @@ const upload = async (token, hook, content, problem, filename, sha, message) => 
 
   const res = await fetch(URL, options);
   if (!res.ok) {
-    throw new LeetHubError(res.status, { cause: res });
+    throw new L2GError(res.status, { cause: res });
   }
   console.log(`Successfully committed ${getPath(problem, filename)} to github`);
 
@@ -156,9 +156,9 @@ const setPersistentStats = async localStats => {
   const pStatsEncoded = encode(JSON.stringify(pStats));
   const sha = localStats?.shas?.[readmeFilename]?.[''] || '';
 
-  const { leethub_token: token, leethub_hook: hook } = await api.storage.local.get([
-    'leethub_token',
-    'leethub_hook',
+  const { L2G_token: token, L2G_hook: hook } = await api.storage.local.get([
+    'L2G_token',
+    'L2G_hook',
   ]);
 
   try {
@@ -207,12 +207,12 @@ const updateReadmeWithDiscussionPost = async (
   shouldPreprendDiscussionPosts
 ) => {
   let responseSHA;
-  const { leethub_token, leethub_hook } = await api.storage.local.get([
-    'leethub_token',
-    'leethub_hook',
+  const { L2G_token, L2G_hook } = await api.storage.local.get([
+    'L2G_token',
+    'L2G_hook',
   ]);
 
-  return getGitHubFile(leethub_token, leethub_hook, directory, filename)
+  return getGitHubFile(L2G_token, L2G_hook, directory, filename)
     .then(resp => resp.json())
     .then(data => {
       responseSHA = data.sha;
@@ -222,7 +222,7 @@ const updateReadmeWithDiscussionPost = async (
       shouldPreprendDiscussionPosts ? encode(addition + existingContent) : encode(existingContent)
     )
     .then(newContent =>
-      upload(leethub_token, leethub_hook, newContent, directory, filename, responseSHA, commitMsg)
+      upload(L2G_token, L2G_hook, newContent, directory, filename, responseSHA, commitMsg)
     );
 };
 
@@ -240,39 +240,39 @@ const updateReadmeWithDiscussionPost = async (
  *
  * @returns {Promise<string>} A promise that resolves with the new SHA of the content after successful upload.
  *
- * @throws {LeetHubError} If there's no token defined, the mode type is not `commit`, or if no repository hook is defined.
+ * @throws {L2GError} If there's no token defined, the mode type is not `commit`, or if no repository hook is defined.
  */
 async function uploadGitWith409Retry(code, problemName, filename, commitMsg, optionals) {
   let token;
   let hook;
 
   const storageData = await api.storage.local.get([
-    'leethub_token',
+    'L2G_token',
     'mode_type',
-    'leethub_hook',
+    'L2G_hook',
     'stats',
   ]);
 
-  token = storageData.leethub_token;
+  token = storageData.L2G_token;
   if (!token) {
-    throw new LeetHubError('LeethubTokenUndefined');
+    throw new L2GError('LeethubTokenUndefined');
   }
 
   if (storageData.mode_type !== 'commit') {
-    throw new LeetHubError('LeetHubNotAuthorizedByGit');
+    throw new L2GError('L2GNotAuthorizedByGit');
   }
 
-  hook = storageData.leethub_hook;
+  hook = storageData.L2G_hook;
   if (!hook) {
-    throw new LeetHubError('NoRepoDefined');
+    throw new L2GError('NoRepoDefined');
   }
 
   /* Get SHA, if it exists */
   const sha = optionals?.sha
     ? optionals.sha
     : storageData.stats?.shas?.[problemName]?.[filename] !== undefined
-    ? storageData.stats.shas[problemName][filename]
-    : '';
+      ? storageData.stats.shas[problemName][filename]
+      : '';
 
   try {
     return await upload(
@@ -371,13 +371,13 @@ function createRepoReadme() {
 
 async function updateReadmeTopicTagsWithProblem(topicTags, problemName) {
   if (topicTags == null) {
-    console.log(new LeetHubError('TopicTagsNotFound'));
+    console.log(new L2GError('TopicTagsNotFound'));
     return;
   }
 
-  const { leethub_token, leethub_hook, stats } = await api.storage.local.get([
-    'leethub_token',
-    'leethub_hook',
+  const { L2G_token, L2G_hook, stats } = await api.storage.local.get([
+    'L2G_token',
+    'L2G_hook',
     'stats',
   ]);
 
@@ -386,8 +386,8 @@ async function updateReadmeTopicTagsWithProblem(topicTags, problemName) {
 
   try {
     const { content, sha } = await getGitHubFile(
-      leethub_token,
-      leethub_hook,
+      L2G_token,
+      L2G_hook,
       readmeFilename
     ).then(resp => resp.json());
     readme = content;
@@ -401,7 +401,7 @@ async function updateReadmeTopicTagsWithProblem(topicTags, problemName) {
   }
   readme = decode(readme);
   for (let topic of topicTags) {
-    readme = appendProblemToReadme(topic.name, readme, leethub_hook, problemName);
+    readme = appendProblemToReadme(topic.name, readme, L2G_hook, problemName);
   }
   readme = sortTopicsInReadme(readme);
   readme = encode(readme);
@@ -422,7 +422,7 @@ function loader(leetCode) {
         iterations++;
         if (iterations > 9) {
           // poll for max 10 attempts (10 seconds)
-          throw new LeetHubError('Could not find successful submission after 10 seconds.');
+          throw new L2GError('Could not find successful submission after 10 seconds.');
         }
         return;
       }
@@ -436,30 +436,31 @@ function loader(leetCode) {
 
       const probStats = leetCode.parseStats();
       if (!probStats) {
-        throw new LeetHubError('SubmissionStatsNotFound');
+        throw new L2GError('SubmissionStatsNotFound');
       }
 
       const probStatement = leetCode.parseQuestion();
       if (!probStatement) {
-        throw new LeetHubError('ProblemStatementNotFound');
+        throw new L2GError('ProblemStatementNotFound');
       }
 
       const problemName = leetCode.getProblemNameSlug();
-      const alreadyCompleted = await isCompleted(problemName);
+      const folderName = leetCode.getProblemFolderName ? leetCode.getProblemFolderName() : problemName;
+      const alreadyCompleted = await isCompleted(folderName);
       const language = leetCode.getLanguageExtension();
       if (!language) {
-        throw new LeetHubError('LanguageNotFound');
+        throw new L2GError('LanguageNotFound');
       }
       const filename = problemName + language;
 
       /* Upload README */
       const uploadReadMe = await api.storage.local.get('stats').then(({ stats }) => {
-        const shaExists = stats?.shas?.[problemName]?.[readmeFilename] !== undefined;
+        const shaExists = stats?.shas?.[folderName]?.[readmeFilename] !== undefined;
 
         if (!shaExists) {
           return uploadGitWith409Retry(
             encode(probStatement),
-            problemName,
+            folderName,
             readmeFilename,
             readmeMsg
           );
@@ -470,17 +471,17 @@ function loader(leetCode) {
       const notes = leetCode.getNotesIfAny();
       let uploadNotes;
       if (notes != undefined && notes.length > 0) {
-        uploadNotes = uploadGitWith409Retry(encode(notes), problemName, 'NOTES.md', createNotesMsg);
+        uploadNotes = uploadGitWith409Retry(encode(notes), folderName, 'NOTES.md', createNotesMsg);
       }
 
       /* Upload code to Git */
       const code = leetCode.findCode(probStats);
-      const uploadCode = uploadGitWith409Retry(encode(code), problemName, filename, probStats);
+      const uploadCode = uploadGitWith409Retry(encode(code), folderName, filename, probStats);
 
       /* Group problem into its relevant topics */
       const updateRepoReadMe = updateReadmeTopicTagsWithProblem(
         leetCode.submissionData?.question?.topicTags,
-        problemName
+        folderName
       );
 
       const newSHAs = await Promise.all([uploadReadMe, uploadNotes, uploadCode, updateRepoReadMe]);
@@ -489,13 +490,13 @@ function loader(leetCode) {
 
       if (!alreadyCompleted) {
         // Increments local and persistent stats
-        incrementStats(leetCode.difficulty, problemName).then(setPersistentStats);
+        incrementStats(leetCode.difficulty, folderName).then(setPersistentStats);
       }
     } catch (err) {
       leetCode.markUploadFailed();
       clearInterval(intervalId);
 
-      if (!(err instanceof LeetHubError)) {
+      if (!(err instanceof L2GError)) {
         console.error(err);
         return;
       }
@@ -525,7 +526,7 @@ async function listenForSubmissionId() {
     type: 'LEETCODE_SUBMISSION',
   });
   if (submissionId == null) {
-    console.log(new LeetHubError('SubmissionIdNotFound'));
+    console.log(new L2GError('SubmissionIdNotFound'));
     return;
   }
   return submissionId;
@@ -542,10 +543,10 @@ async function v2SubmissionHandler(event, leetCode) {
   }
 
   const authenticated =
-    !isEmptyObject(await api.storage.local.get(['leethub_token'])) &&
-    !isEmptyObject(await api.storage.local.get(['leethub_hook']));
+    !isEmptyObject(await api.storage.local.get(['L2G_token'])) &&
+    !isEmptyObject(await api.storage.local.get(['L2G_hook']));
   if (!authenticated) {
-    throw new LeetHubError('UserNotAuthenticated');
+    throw new L2GError('UserNotAuthenticated');
   }
 
   // is click or is ctrl enter
@@ -564,8 +565,8 @@ const submitBtnObserver = new MutationObserver(function (_mutations, observer) {
     textareaList.length === 4
       ? textareaList[2]
       : textareaList.length === 2
-      ? textareaList[0]
-      : textareaList[1];
+        ? textareaList[0]
+        : textareaList[1];
 
   if (v1SubmitBtn) {
     observer.disconnect();
@@ -594,11 +595,11 @@ submitBtnObserver.observe(document.body, {
 /* Sync to local storage */
 api.storage.local.get('isSync', data => {
   const keys = [
-    'leethub_token',
-    'leethub_username',
-    'pipe_leethub',
+    'L2G_token',
+    'L2G_username',
+    'pipe_L2G',
     'stats',
-    'leethub_hook',
+    'L2G_hook',
     'mode_type',
   ];
   if (!data || !data.isSync) {
@@ -608,10 +609,10 @@ api.storage.local.get('isSync', data => {
       });
     });
     api.storage.local.set({ isSync: true }, () => {
-      console.log('LeetHub Synced to local values');
+      console.log('L2G Synced to local values');
     });
   } else {
-    console.log('LeetHub Local storage already synced!');
+    console.log('L2G Local storage already synced!');
   }
 });
 
@@ -620,7 +621,7 @@ setupManualSubmitBtn(
     () => {
       const leetCode = new LeetCodeV2();
       // Manual submission event can only fire when we have submissionId. Simply retrieve it.
-      const submissionId = window.location.href.match(/leetcode\.com\/.*\/submissions\/(\d+)/)[1];
+      const submissionId = window.location.href.match(/leetcode\.cn\/.*\/submissions\/(\d+)/)[1];
       leetCode.submissionId = submissionId;
       loader(leetCode);
       return;
@@ -630,7 +631,7 @@ setupManualSubmitBtn(
   )
 );
 
-class LeetHubNetworkError extends LeetHubError {
+class L2GNetworkError extends L2GError {
   constructor(response) {
     super(response.statusText);
     this.status = response.status;

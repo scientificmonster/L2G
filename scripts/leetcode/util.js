@@ -34,10 +34,10 @@ const DIFFICULTY = Object.freeze({
   UNKNOWN: 'Unknown',
 });
 
-class LeetHubError extends Error {
+class L2GError extends Error {
   constructor(message) {
     super(message);
-    this.name = 'LeetHubErr';
+    this.name = 'L2GErr';
   }
 }
 
@@ -53,7 +53,7 @@ function isEmptyObject(obj) {
 
 function assert(truthy, msg) {
   if (!truthy) {
-    throw new LeetHubError(msg);
+    throw new L2GError(msg);
   }
 }
 
@@ -104,7 +104,7 @@ function getBrowser() {
   } else if (typeof browser !== 'undefined' && typeof browser.runtime !== 'undefined') {
     return browser;
   } else {
-    throw new LeetHubError('BrowserNotSupported');
+    throw new L2GError('BrowserNotSupported');
   }
 }
 
@@ -155,7 +155,7 @@ function addLeadingZeros(title) {
 }
 
 function formatStats(time, timePercentile, space, spacePercentile) {
-  return `Time: ${time} (${timePercentile}%), Space: ${space} (${spacePercentile}%) - LeetHub`;
+  return `Time: ${time} (${timePercentile}%), Space: ${space} (${spacePercentile}%) - L2G`;
 }
 
 function isObject(obj) {
@@ -220,6 +220,6 @@ export {
   getDifficulty,
   isEmptyObject,
   languages,
-  LeetHubError,
+  L2GError,
   mergeStats,
 };
