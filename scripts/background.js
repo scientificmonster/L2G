@@ -1,0 +1,66 @@
+let api = isChrome() ? chrome : isFirefox() ? browser : undefined;
+
+api.runtime.onInstalled.addListener(details => {
+  if (details.reason === 'install') {
+    // Allow persistent stats to sync on repo link
+    api.storage.local.set({ sync_stats: true });
+  }
+});
+
+api.runtime.onMessage.addListener(handleMessage);
+
+function handleMessage(request, sender, sendResponse) {
+  if (request && request.closeWebPage === true && request.isSuccess === true) {
+    /* Set username */
+    api.storage.local.set({ L2G_username: request.username });
+
+    /* Set token */
+    api.storage.local.set({ L2G_token: request.token });
+
+    /* Close pipe */
+    api.storage.local.set({ pipe_L2G: false }, () => {
+      console.log('Closed pipe.');
+    });
+
+    api.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+      var tab = tabs[0];
+      api.tabs.remove(tab.id);
+    });
+
+    /* Go to onboarding for UX */
+    const urlOnboarding = api.runtime.getURL('welcome.html');
+    api.tabs.create({ url: urlOnboarding, active: true }); // creates new tab
+    return; // no async response needed
+  }
+
+  if (request && request.closeWebPage === true && request.isSuccess === false) {
+    alert('Something went wrong while trying to authenticate your profile!');
+    api.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+      var tab = tabs[0];
+      api.tabs.remove(tab.id);
+    });
+    return; // no async response needed
+  }
+
+  if (request.type === 'LEETCODE_SUBMISSION') {
+    api.webNavigation.onHistoryStateUpdated.addListener(
+      (e = function (details) {
+        const match = details.url.match(/\/submissions\/(\d+)\//);
+        if (match) {
+          sendResponse({ submissionId: match[1] });
+          api.webNavigation.onHistoryStateUpdated.removeListener(e);
+        }
+      }),
+      { url: [{ hostSuffix: 'leetcode.cn' }, { pathContains: 'submissions' }] }
+    );
+    return true; // only this branch needs async sendResponse
+  }
+}
+
+function isChrome() {
+  return typeof chrome !== 'undefined' && typeof chrome.runtime !== 'undefined';
+}
+
+function isFirefox() {
+  return typeof browser !== 'undefined' && typeof browser.runtime !== 'undefined';
+}

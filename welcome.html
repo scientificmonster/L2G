@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeetCode cn to Github</title>
+  <link rel="stylesheet" href="css/welcome.css" />
+  <script src="scripts/jquery-3.3.1.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" />
+  <script src="scripts/semantic-2.4.1.min.js"></script>
+</head>
+
+<body>
+  <div class="main-container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1 class="hero-title">
+        LeetCode <span class="cn">cn</span> to <span class="github">Github</span>
+      </h1>
+      <p class="hero-subtitle">
+        自动同步你在力扣的代码提交到 GitHub 仓库
+      </p>
+    </div>
+
+    <!-- Messages -->
+    <div style="max-width:500px; margin:0 auto;">
+      <p hidden id="error"></p>
+      <p hidden id="success"></p>
+      <p hidden id="unlink">
+        链接了错误的仓库？<a>取消链接</a>
+      </p>
+    </div>
+
+    <!-- Create / Link Hook -->
+    <div style="display: none" id="hook_mode" class="glass-card setup-section">
+      <p class="setup-title">开始使用</p>
+      <div class="setup-form">
+        <select id="type">
+          <option value="">选择一个操作</option>
+          <option value="new">创建新的私有仓库</option>
+          <option value="link">链接已有仓库</option>
+        </select>
+        <input autocomplete="off" id="name" placeholder="输入仓库名称" type="text" />
+        <button id="hook_button" disabled class="btn-primary">
+          开始同步
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display: none" id="commit_mode" class="glass-card">
+      <div class="stats-grid">
+        <div class="stat-item stat-total">
+          <span class="stat-number" id="p_solved">0</span>
+          <span class="stat-label">已解决</span>
+        </div>
+        <div class="stat-item stat-easy">
+          <span class="stat-number" id="p_solved_easy">0</span>
+          <span class="stat-label">Easy</span>
+        </div>
+        <div class="stat-item stat-medium">
+          <span class="stat-number" id="p_solved_medium">0</span>
+          <span class="stat-label">Medium</span>
+        </div>
+        <div class="stat-item stat-hard">
+          <span class="stat-number" id="p_solved_hard">0</span>
+          <span class="stat-label">Hard</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <a target="_blank" href="https://github.com/scientificmonster/L2G">⭐ Star on GitHub</a>
+    </div>
+
+  </div>
+
+  <script type="text/javascript" src="scripts/welcome.js"></script>
+</body>
+
+</html>

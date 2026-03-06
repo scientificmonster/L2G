@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "L2G",
+  "description": "自动同步LeetCode提交到GitHub",
+  "homepage_url": "https://github.com/arunbhardwaj/L2G",
+  "version": "__LH_VERSION__",
+  "author": "Arun Bhardwaj",
+  "action": {
+    "default_icon": "assets/thumbnail.png",
+    "default_popup": "popup.html",
+    "default_title": "自动同步LeetCode提交到GitHub"
+  },
+  "icons": {
+    "16": "assets/thumbnail.png",
+    "48": "assets/thumbnail.png",
+    "128": "assets/thumbnail.png"
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "storage",
+    "webNavigation"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.cn/*"
+      ],
+      "js": [
+        "scripts/leetcode.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://github.com/*"
+      ],
+      "js": [
+        "scripts/authorize.js"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

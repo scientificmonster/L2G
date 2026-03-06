@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  l2g-dev:
+    build: .
+    container_name: l2g_dev_env
+    # Mount the current directory (where docker-compose.yml is) to /app in the container
+    volumes:
+      - ./:/app
+      # Optional: To heavily speed up the app on macOS/Windows, you could use a named volume for node_modules,
+      # but usually directly mounting is fine for WSL2 due to its fast ext4 filesystem.
+    
+    # Keep the container running in the background, waiting for us to enter it
+    tty: true
+    stdin_open: true
+    command: bash
+    
+    # Set environment variable to make Puppeteer download and use its own browser binaries smoothly in Docker
+    environment:
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false
